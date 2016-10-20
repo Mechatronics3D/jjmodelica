@@ -7,7 +7,7 @@ jJModelica includes:
    - CasADi
 
 ## Usage
-You can run the container like this:
+You can run the container with this command:
 
 `docker run -p 8888:8888 mechatronics3d/jjmodelica`
 
