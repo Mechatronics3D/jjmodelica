@@ -1,5 +1,4 @@
 # jJModelica
-
 jJModelica includes:
 
    - Jupyter
@@ -21,6 +20,7 @@ Then go to this address on your browser:
 
 `http://localhost:8888/`
 
+# Example
 To run the first example, open a new Jupyter Notebook for Python 2 and enter:
 
 `%matplotlib inline`
