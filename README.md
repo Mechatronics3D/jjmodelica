@@ -24,5 +24,7 @@ Then go to this address on your browser:
 To run the first example, open a new Jupyter Notebook for Python 2 and enter:
 
 `%matplotlib inline`
+
  `from pyjmi.examples import VDP_sim`
+ 
  `VDP_sim.run_demo()`
