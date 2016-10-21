@@ -1,20 +1,16 @@
-FROM krallin/ubuntu-tini:trusty
+FROM jupyter/datascience-notebook
 MAINTAINER Behzad Samadi <behzad@mechatronics3d.com>
-# based on the work of Jan Suchotzki (suchja) <jan@suchotzki.de> and Adrian Buerger <adrian.buerger@hs-karlsruhe.de>,
-# and Vadim Alimguzhin <alimguzhin@di.uniroma1.it>.
 
 ENV CASADIVERSION=3.1.0-rc1
 
-ENV DL=/home/jserver/Downloads
+ENV DL=$HOME/Downloads
 
-ENV WS=/home/jserver/workspace
+ENV WS=$HOME/work
 
 ENV PKGS="wget unzip gcc g++ gfortran git cmake liblapack-dev pkg-config swig spyder time"
 ENV Py2_PKGS="python-pip python-numpy python-scipy python-matplotlib"
 ENV JM_PKGS="cython jcc subversion ant openjdk-6-jdk python-dev python-svn python-lxml python-nose zlib1g-dev libboost-dev dpkg-dev build-essential libwebkitgtk-dev libjpeg-dev libtiff-dev libgtk2.0-dev libsdl1.2-dev libgstreamer-plugins-base0.10-dev libnotify-dev freeglut3 freeglut3-dev"
 ENV PIP2="jupyter vpython CVXcanon cvxpy"
-
-
 
 # Install required packages
 RUN apt-get update && \
@@ -27,18 +23,6 @@ RUN pip install --upgrade pip
 RUN pip install $PIP2
 
 RUN pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix
-
-# Create user and group
-RUN adduser \
-			--home /home/jserver \
-			--disabled-password \
-			--shell /bin/bash \
-			--gecos "user for running a jupyter server" \
-			--ingroup root \
-			--quiet \
-			jserver
-
-ENV USER=jserver
 
 # Install Ipopt for JModelica
 RUN mkdir $DL
@@ -83,12 +67,6 @@ ENV SEPARATE_PROCESS_JVM=/usr/lib/jvm/java-7-openjdk-amd64/
 
 RUN cd $WS && mkdir cvxpy && mkdir cvxflow
 
-RUN chown -R jserver $DL
-
-RUN chown -R jserver $WS
-
-USER jserver
-
 # Clone cvxpy
 RUN git clone https://github.com/cvxgrp/cvx_short_course.git $WS/cvxpy
 
@@ -100,7 +78,9 @@ RUN wget http://sourceforge.net/projects/casadi/files/CasADi/$CASADIVERSION/linu
     -O $DL/casadi-py27-np1.9.1-v$CASADIVERSION.tar.gz && \
     mkdir $WS/casadi-py27-np1.9.1-v$CASADIVERSION && \
     tar -zxvf $DL/casadi-py27-np1.9.1-v$CASADIVERSION.tar.gz \
-    -C $WS/casadi-py27-np1.9.1-v$CASADIVERSION
+    -C $WS/casadi-py27-np1.9.1-v$CASADIVERSION && \
+    cd $WS/casadi-py27-np1.9.1-v$CASADIVERSION && mkdir build && cd build && \
+    cmake -DWITH_PYTHON=ON ..
 
 # Adding CasADi to PYTHONPATH
 ENV PYTHONPATH=$PYTHONPATH:$WS/casadi-py27-np1.9.1-v$CASADIVERSION
@@ -111,12 +91,9 @@ RUN wget http://sourceforge.net/projects/casadi/files/CasADi/$CASADIVERSION/casa
     mkdir $WS/casadi_examples && \
     unzip $DL/casadi-example_pack-v$CASADIVERSION.zip \
     -d $WS/casadi_examples
+    
+RUN chown -R $NB_USER $DL
 
-WORKDIR /home/jserver/workspace
+RUN chown -R $NB_USER $WS
 
-# Startup
-EXPOSE 8888
-
-ENTRYPOINT ["/usr/bin/tini", "--"]
-
-CMD ["jupyter", "notebook", "--port=8888", "--no-browser", "--ip=0.0.0.0"]
+USER $NB_USER
