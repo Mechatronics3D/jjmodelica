@@ -3,7 +3,7 @@ MAINTAINER Behzad Samadi <behzad@mechatronics3d.com>
 
 USER root
 
-ENV JM_PKGS="cython jcc subversion ant openjdk-7-jdk python-dev python-svn python-lxml python-nose zlib1g-dev libboost-dev dpkg-dev build-essential libwebkitgtk-dev libjpeg-dev libtiff-dev libgtk2.0-dev libsdl1.2-dev libgstreamer-plugins-base0.10-dev libnotify-dev freeglut3 freeglut3-dev"
+ENV JM_PKGS="cython jcc subversion ant openjdk-7-jdk python-dev python-svn python-lxml python-nose zlib1g-dev libboost-dev dpkg-dev build-essential libwebkitgtk-dev libjpeg-dev libtiff-dev libgtk2.0-dev libsdl1.2-dev libgstreamer-plugins-base0.10-dev libnotify-dev freeglut3 freeglut3-dev dc"
 
 # Install required packages
 RUN apt-get update && \
